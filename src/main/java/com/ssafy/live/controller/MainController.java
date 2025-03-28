@@ -21,12 +21,18 @@ import jakarta.servlet.http.HttpSession;
 public class MainController extends HttpServlet implements ControllerHelper {
 
     private static final long serialVersionUID = 1L;
+    
+    // SGIS API 키
+    private final String keyVworld = "등록된 키"; // 실제 키로 변경 필요
+    private final String keySgisServiceId = "bd044ce29c9d452f986c"; // 서비스 id
+    private final String keySgisSecurity = "608dea38105d4f6ca39c"; // 보안 key
+    private final String keyData = "/nY0dthdgiMTSxqSb0jK/5+kT6LxtTwCBm9nJJVzdpFBuODsmJYh50YC8FSYus3E/wGpBZvR2JhLjJaJuw44jw=="; // data.go.kr 인증키
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = preProcessing(request, response);
         switch (action) {
-        case "index" -> forward(request, response, "/index.jsp");
+        case "index" -> index(request, response);
         case "gugu-form" -> forward(request, response, "/gugu/gugu-form.jsp");
         case "gugu" -> gugu(request, response);
         case "make-cookie" -> makeCookie(request, response);
@@ -39,6 +45,18 @@ public class MainController extends HttpServlet implements ControllerHelper {
         }
     }
 
+    // 메인 페이지 처리 메서드 수정
+    private void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 지도 API 키 설정
+        request.setAttribute("key_vworld", keyVworld);
+        request.setAttribute("key_sgis_service_id", keySgisServiceId);
+        request.setAttribute("key_sgis_security", keySgisSecurity);
+        request.setAttribute("key_data", keyData);
+        
+        forward(request, response, "/index.jsp");
+    }
+    
+    // 이하 기존 메서드들...
     private void makeCookie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         setupCookie("for-domain", "container_root", 60 * 10, "/", response);
         setupCookie("just-1-min", "1분-유지-쿠키", 60 * 1, null, response);
@@ -104,9 +122,4 @@ public class MainController extends HttpServlet implements ControllerHelper {
         int i = 1 / 0;
         forward(request, response, "/member/member-list.jsp");
     }
-
-    private void template(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
 }
